@@ -1,4 +1,5 @@
 @import url("base.css");
+
 html {
     height: 100%;
     overflow-y: scroll;
@@ -42,11 +43,11 @@ input[type=range] {
 
 h1 {
     margin-top: 0px;
-    color: #F8F8FF;
-    background-image: -webkit-gradient(linear,left top,left bottom,from(#BBBBBB),to(gray));
+    color: #f4daff;
+    background-image: -webkit-gradient(linear,left top,left bottom,from(#ccafab),to(#783d45));
     border-radius: 0px 0px 10px 10px;
     padding: 5px 10px 10px 10px;
-    text-shadow: rgba(0,0,0,0.3)0px -1px 1px;
+    text-shadow: rgba(120, 0, 23, 0.4) 0px -1px 1px;
     font-size: 150%;
     text-align: center;
     -webkit-box-shadow: rgba(0,0,0,0.15)0px 3px 5px;
