@@ -1,0 +1,25 @@
+body{
+    white-space: nowrap;
+    overflow-x: hidden ;
+    overflow-y: auto;
+    height: 6.2em;
+}
+.main_controls {
+    text-align: center;
+    white-space: nowrap;
+    height: 1em;
+    margin-top: 1em;
+    margin-bottom: 0;
+    padding-top: 0;
+    padding-bottom: 1em
+}
+.main_controls>button{
+    color: #849ccb;
+    cursor: pointer;
+    margin: 0 10px;
+}
+
+.main_controls>button.inactive{
+    color: #999;
+    cursor: default;
+}
