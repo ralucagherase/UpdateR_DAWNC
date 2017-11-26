@@ -1,4 +1,4 @@
-@import "base.css";
+@import url("base.css");
 body{
     white-space: nowrap;
     overflow-x: hidden ;
@@ -14,13 +14,46 @@ body{
     padding-top: 0;
     padding-bottom: 1em
 }
-.main_controls>button{
+.page_controls>span {
     color: #849ccb;
+    margin-left: 3.15em;
+    width: auto;
+    text-align: right;
     cursor: pointer;
-    margin: 0 10px;
+}
+.main_controls>button:hover,.page_controls>button:hover {
+    text-shadow: #849ccb 0 -1px 0;
 }
 
-.main_controls>button.inactive{
+.main_controls>button img,.page_controls>button img {
+    vertical-align: middle;
+}
+
+.main_controls>button.inactive {
     color: #999;
     cursor: default;
+}
+
+.main_controls>button.inactive:hover {
+    text-shadow: none;
+}
+
+#monitor_page.inprogress {
+    cursor: progress;
+}
+
+.loading {
+    width: 100%;
+}
+
+.loading_spacer {
+    height: 2.7em;
+}
+
+.loading_spacer td {
+    background: url('../img/loader.gif')center 16px no-repeat;
+}
+
+.notification div {
+    min-width: 10px;
 }

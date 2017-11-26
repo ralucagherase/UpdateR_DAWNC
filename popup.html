@@ -6,12 +6,55 @@
     <link rel="stylesheet" type="text/css" href="css/popup.css">
     <script src="js/popup.js"></script>
 </head>
-<body>
+<body style="margin-right: 0px">
     <h1>UpdateR</h1>
-    <form>
-        <label>URL to your page</label>
-        <input id="url" autofocus required>
-    </form>
+    <table id="templates">
+       <tbody>
+        <tr class="notification">
+            <td>
+                <div class="page_info">
+                    <a class="page_link" href="#">Page</a>
+                </div>
+                <div class="page_controls">
+                    <span class="stop_monitoring">
+                        <span class title> Stop Monitoring</span>
+                    </span>
+                    <span class="mark_visited">
+                        <span class title> Mark as visited</span>
+                    </span>
+                    <span class="view_diff">
+                        <span class title>View changes</span>
+                    </span>
+                </div>
+            </td>
+        </tr>
+       <tr class="empty">
+           <td>
+               <span class title>No changes found.</span>
+           </td>
+       </tr>
+       <tr class="loading_spacer">
+           <td>&nbsp;</td>
+       </tr>
+       </tbody>
+    </table>
+    <table id="noifications" class="main_table">
+        <tbody>
+            <tr class="empty">
+                <td>
+                    <span>No changes found</span>
+                    <div class="page_info inactive">
+                        <a class="page_link" href="#"></a>
+                    </div>
+                    <div class="page_controls inactive">
+                        <span class="stop_monitoring">Stop Monitoring</span>
+                        <span class="mark_visited">Mark visited</span>
+                        <span class="view_diff"> View Changes</span>
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
     <p class="main_controls">
         <button id="monitorPage" class="inactive">Monitor this page</button>
         <button id="viewUpdates" class="inactive">View updates</button>
