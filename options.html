@@ -12,6 +12,7 @@
     </h1>
 
     <table id="templates">
+        <tbody>
         <tr class="page_record">
             <td>
 
@@ -24,7 +25,7 @@
                         <span class="advanced_toggle toggled">
                             <label>
                                 <input type="checkbox" checked="checked">
-                                <span class="title">Advanced</span>
+                                <span class="advanced">Advanced</span>
                             </label>
                         </span>
 
@@ -40,8 +41,10 @@
 
 
                         <span class="last_check">
-                            <span class="last_check">Last Check:</span>
-                            <span class="last_check_time" style="display: inline">
+                            <img src="" class="check_now" alt="Check Now">
+                            <img src="" alt="Last Check">
+                            <span class="i18n" title="last_check">Last Check:</span>
+                            <span class="i18n" title="last_check_time" style="display: inline">
                                 <span class="unknown">.</span>
                             </span>
                         </span>
@@ -124,8 +127,8 @@
         <p id="notifications">
             <span class="notifications">Notifications</span>
             <select>
-                <option value="enabled" class="enabled"></option>
-                <option value="disabled" class="disabled"></option>
+                <option value="enabled" class="enabled"> Enabled</option>
+                <option value="disabled" class="disabled"> Disabled</option>
             </select>
         </p>
 
