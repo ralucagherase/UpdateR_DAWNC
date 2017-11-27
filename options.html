@@ -96,34 +96,37 @@
     <!-- Basic options. -->
     <div id="basic_options">
         <table>
-            <tr>
-                <td id="basic_notifications">
-
-                    <span class="notifications">Notifications:</span>
+            <tbody>
+                <tr>
+                    <td id="basic_notifications">
+                        <img src="" alt="">
+                        <span class="i18n" title="notifications">Desktop Notifications:</span>
                         <select>
-                            <option value="enabled" class="enabled"></option>
-                            <option value="disabled" class="disabled"></option>
+                            <option value="enabled" class="i18n" title="enabled">Enabled</option>
+                            <option value="disabled" class="i18n" title="disabled">Disabled</option>
                         </select>
-                </td>
-                <td id="basic_sound_alert">
-
-                    <span class="sound_alert">Sound alert:</span>
+                    </td>
+                    <td id="basic_sound_alert">
+                        <img src="" alt="">
+                        <span class="i18n" title= "sound_alert">Sound alert:</span>
                         <select>
-                            <option value="" class="sound_none"></option>
+                            <option value="" class="i18n" title="sound_none">None</option>
                         </select>
-                </td>
-                <td id="basic_interval">
-                    <span class="check_every">Check every:</span>
-                    <input type="range" value="12.8" min="-6" max="20" step="0.01">
-                    <label class="range_value_label"></label>
-                </td>
-            </tr>
+                    </td>
+                    <td id="basic_interval">
+                        <img src="" alt="">
+                        <span class="i18n" title="check_every">Check interval:</span>
+                        <input type="range" value="12.8" min="-6" max="20" step="0.01">
+                        <label class="range_value_label" style="left: 905px"></label>
+                    </td>
+                </tr>
+            </tbody>
         </table>
     </div>
 
 
     <!-- Advanced options. -->
-    <div id="advanced_options">
+    <div id="advanced_options" style="display: block">
         <p id="notifications">
             <span class="notifications">Notifications</span>
             <select>
@@ -133,98 +136,100 @@
         </p>
 
         <p id="notifications_timeout">
-            <span class="notifications_timeout"></span>
+            <span class="notifications_timeout">Notification stay:</span>
             <input type="range" value="30" min="1" max="62" step="1">
-            <label class="range_value_label"></label>
+            <label class="range_value_label">secondes</label>
         </p>
 
         <p id="interval">
-            <span class="check_every"></span>
+            <span class="check_every">Check interval:</span>
             <input type="text" value="180" maxlength="4">
-            <label class="check_every_label"></label>
+            <label class="check_every_label">minutes</label>
         </p>
 
         <p id="sound_alert">
-            <span class="sound_alert"></span>
+            <img src="" alt="">
+            <span class="sound_alert">Sound Alert:</span>
 
             <select>
-                <option value="" class="sound_none"></option>
+                <option value="" class="sound_none">None</option>
             </select>
 
-            <button id="play_sound">
-                <span class="sound_play"></span>
+            <button id="play_sound" disabled="disabled">
+                <span class="sound_play">Play</span>
             </button>
 
             <button id="new_sound">
-                <span class="sound_new"></span>
+                <span class="sound_new">New</span>
             </button>
 
-            <button id="delete_sound">
-                <span class="sound_delete"></span>
+            <button id="delete_sound" disabled="disabled">
+                <span class="sound_delete">Delete</span>
             </button>
         </p>
 
 
         <p id="sort">
-            <span class="sort"></span>
+            <img src="" alt="">
+            <span class="sort">Sort by:</span>
             <select>
-                <option value="date added" class="sort_date"></option>
-                <option value="name" class="sort_name"></option>
-                <option value="url" class="sort_url"></option>
-                <option value="check interval" class="sort_interval"></option>
-                <option value="last check" class="sort_last_check"></option>
-                <option value="last change" class="sort_last_change"></option>
+                <option value="date added" class="sort_date">Date added</option>
+                <option value="name" class="sort_name">Name</option>
+                <option value="url" class="sort_url">URL</option>
+                <option value="check interval" class="sort_interval">Date interval</option>
+                <option value="last check" class="sort_last_check">Last checked</option>
+                <option value="last change" class="sort_last_change">Last changed</option>
             </select>
         </p>
 
 
         <p id="animation">
-            <span class="animations"></span>
+            <span class="animations">Animations:</span>
             <select>
-                <option value="enabled" class="enabled"></option>
-                <option value="disabled" class="disabled"></option>
+                <option value="enabled" class="enabled">enabled</option>
+                <option value="disabled" class="disabled">disabled</option>
             </select>
         </p>
 
 
         <p id="view_all">
-            <span class="view_all_function"></span>
+            <span class="view_all_function">View all function</span>
             <select>
-                <option value="diff" class="view_diff"></option>
-                <option value="original" class="view_original"></option>
+                <option value="diff" class="view_diff">View differences</option>
+                <option value="original" class="view_original">View original</option>
             </select>
         </p>
 
 
         <p id="badge_color">
-            <span class="badge_color"></span>
+            <span class="badge_color">Notification Color:</span>
             <input type="text" value="#00B400">
         </p>
 
 
         <p id="hide_deletions">
-            <span class="hide_deletions"></span>
+            <span class="hide_deletions">Hide deletions</span>
             <input type="checkbox">
         </p>
 
 
         <p id="show_full_page_diff">
-            <span class="show_full_page_diff"></span>
+            <span class="show_full_page_diff">Show full page differences:</span>
             <input type="checkbox">
         </p>
 
 
         <div id="actions">
                 <span id="import">
-                    <span class="import"></span>
+                    <span class="import">Import</span>
                 </span>
 
                 <span id="export">
-                    <span class="export"></span>
+                    <span class="export">Export</span>
                 </span>
 
                 <span id="check_all">
-                    <span class="check_all"></span>
+                    <span class="check_all">Check All Now</span>
                 </span>
         </div>
     </div>
@@ -233,13 +238,13 @@
     <!-- Basic/Advanced options switch. -->
     <label id="options_switch">
         <input type="checkbox">
-        <span class="advanced"></span>
+        <span class="advanced">Advanced</span>
     </label>
 
 
     <!-- Pop-up forms. -->
     <div id="test_result_form">
-        <span class="test_matches"></span>
+        <span class="test_matches">Matched:</span>
         <textarea rows="10" cols="80" readonly>...</textarea>
         <button>
             <span class="close"></span>
@@ -248,42 +253,42 @@
 
 
     <div id="export_form">
-        <span class="export_prompt"></span>
+        <span class="export_prompt">Copy this text into a file and save it as bookmarks.html:</span>
         <textarea rows="10" cols="80">...</textarea>
         <button>
-            <span class="close"></span>
+            <span class="close">Close</span>
         </button>
     </div>
 
 
     <div id="import_form">
-        <span class="import_prompt"></span>
+        <span class="import_prompt">Paste the contents of your bookmarks.html here:</span>
         <textarea rows="10" cols="80"></textarea>
 
         <button id="import_perform">
-            <span class="import_button"></span>
+            <span class="import_button">Import</span>
         </button>
 
         <button id="import_cancel">
-            <span class="cancel"></span>
+            <span class="cancel">Cancel</span>
         </button>
     </div>
 
 
     <div id="new_sound_form">
-        <label for="new_sound_name" class="sound_name"></label>
+        <label for="new_sound_name" class="sound_name">Name</label>
         :
         <input type="text" id="new_sound_name" value="">
-        <label for="new_sound_url" class="sound_url"></label>
+        <label for="new_sound_url" class="sound_url">URL</label>
         :
         <input type="text" id="new_sound_url" value="">
 
         <div id="new_sound_buttons">
             <button id="new_sound_create">
-                <span class="sound_create"></span>
+                <span class="sound_create">Create</span>
             </button>
             <button id="new_sound_cancel">
-                <span class="cancel"></span>
+                <span class="cancel">Cancel</span>
             </button>
         </div>
     </div>

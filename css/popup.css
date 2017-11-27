@@ -4,6 +4,25 @@ body{
     overflow-x: hidden ;
     overflow-y: auto;
     height: 6.2em;
+    background: linear-gradient(#cae8ff, #f2d6bd) 100% no-repeat;
+}
+h1{
+    text-align: center;
+    white-space: nowrap;
+    color:indianred;
+    font-size: 20px;
+
+}
+.main_controls>button {
+    border-radius: 4px;
+    background-color: #e23e2e;
+    border: none;
+    color: #FFFFFF;
+    text-align: center;
+    font-size: 15px;
+    transition: all 0.5s;
+    cursor: pointer;
+
 }
 .main_controls {
     text-align: center;
@@ -30,7 +49,13 @@ body{
 }
 
 .main_controls>button.inactive {
-    color: #999;
+    border-radius: 4px;
+    background-color: #cb888e;
+    border: none;
+    color: black;
+    text-align: center;
+    font-size: 15px;
+    transition: all 0.5s;
     cursor: default;
 }
 

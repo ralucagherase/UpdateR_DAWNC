@@ -21,7 +21,7 @@ table {
 }
 
 .main_table tr:nth-child(odd) {
-    background: white;
+    background: none;
 }
 
 .main_table tr:nth-child(even) {
