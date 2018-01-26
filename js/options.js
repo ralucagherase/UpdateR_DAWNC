@@ -479,7 +479,7 @@ function initializePageModePicker() {
                     })
                 });
                 chrome.tabs.insertCSS(a.id, {
-                    file: "styles/selector.css"
+                    file: "styles/selector.styles"
                 })
             })
         })

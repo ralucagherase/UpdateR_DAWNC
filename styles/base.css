@@ -1,3 +1,4 @@
+/*Global Styles*/
 body {
     font-family: Verdana,Tahoma,Arial,sans-serif;
     font-size: 100%;
@@ -13,7 +14,7 @@ table {
     border-spacing: 0;
     width: 100%;
 }
-
+/*Main tables*/
 .main_table {
     border: none;
     overflow: hidden;
@@ -44,7 +45,7 @@ table {
     text-align: center;
     color: #999;
 }
-
+/*Links*/
 a:link,a:visited {
     color: #647CCB;
     text-decoration: none;
@@ -54,7 +55,7 @@ a:hover {
     text-decoration: none;
     color: blue;
 }
-
+/*Favicon image*/
 img.favicon {
     float: left;
     display: block;
@@ -65,7 +66,7 @@ img.favicon {
     position: relative;
     top: 2px;
 }
-
+/*Templates*/
 #templates {
     display: none;
 }
