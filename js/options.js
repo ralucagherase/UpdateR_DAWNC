@@ -1,5 +1,167 @@
-var MIN_TIME_TEXTBOX_VALUE = .8;
+/*
+  The code behind the options HTML page. Manages manipulating the pages list as
+  well as editing global and per-page settings.
+*/
+// The minimum length of time in minutes that a time textbox is allowed to have.
 
+var MIN_TIME_TEXTBOX_VALUE = 0.8; //aproximatively 5 sec
+
+
+// Returns a boolean indicating whether the supplied string is a valid selector.
+function isValidSelector(selector) {
+    if (selector == '#') {
+        return false;
+    }
+    try {
+        $(selector);
+    } catch (e) {
+        return false;
+    }
+    return true;
+}
+
+// Fades the background (elements with z-index < 1) to gray and back, depending
+// on whether the "show" argument evaluates to boolean true or false.
+function shadeBackground(show) {
+    var dark = $('#shader');
+    if (dark.length == 0) dark = $('<div id="shader" />').appendTo('body');
+    dark.height($('body').get(0).scrollHeight);
+
+    if (show) {
+        dark.css('display', 'block').animate({ opacity: 0.7 });
+    } else {
+        dark.animate({ opacity: 0 }, function() {
+            dark.css('display', 'none');
+        });
+    }
+}
+
+// Returns the URL of the page record given any element in it.
+function findUrl(context) {
+    return $(context).closest('.page_record').find('.page_link').get(0).href;
+}
+
+// Returns a jQuery-wrapped page_record element which contains the specified
+// context element of a link to the specified URL.
+function findPageRecord(url_or_context) {
+    if (typeof(url_or_context) == 'string') {
+        url_or_context = '.page_link[href="' + url_or_context + '"]';
+    }
+    return $(url_or_context).closest('.page_record');
+}
+
+// Returns 2 to the power of the given value. Used when converting the value of
+// the check interval sliders which use a logarithmic scale. The returned value
+// is rounded to 2 decimal places if they are below 1. It is rounded to 1
+// decimal place for values between 1 and 10. It is rounded to an integer for
+// values above 10.
+function timeLogToAbsolute(log) {
+    var val = Math.pow(1.5, log);
+    if (val < 1) {
+        return Math.round(val * 100) / 100;
+    } else if (val < 10) {
+        return Math.round(val * 10) / 10;
+    } else {
+        return Math.round(val);
+    }
+}
+
+// Returns the logarithm of 2 for the given value. Used when setting the check
+// interval sliders which use a logarithmic scale.
+function timeAbsoluteToLog(absolute) {
+    return Math.log(absolute) / Math.log(1.5);
+}
+
+// Enables or disables the Test button and the regex/selector textbox for a
+// particular page record depending on whether the enable argument is non-false.
+function updatePageModeControls(page_record, enable) {
+    page_record.find('.mode .mode_string').toggleClass('invalid', !enable);
+    page_record.find('.mode .mode_test').attr({ disabled: !enable });
+}
+
+// Applies a per-page check interval to a page given its URL. The interval
+// should be a number in minutes or a null to disable custom interval for this
+// page. After the new value is applied, scheduleCheck() is called on the
+// background page.
+function setPageCheckInterval(url, minutes) {
+    var interval = (parseFloat(minutes) * 60 * 1000) || null;
+    setPageSettings(url, { check_interval: interval }, BG.scheduleCheck);
+}
+
+
+//Import& export functions
+
+function exportPagesList(callback) {
+    if (!callback) return;
+
+    getAllPages(function(pages) {
+        var buffer = [];
+        var add_date = Date.now();
+
+        buffer.push('<!DOCTYPE NETSCAPE-Bookmark-file-1>\n\n<!-- This is an' +
+            ' automatically generated file.\n     It will be read and' +
+            ' overwritten.\n     DO NOT EDIT! -->\n<META HTTP-EQUIV=' +
+            '"Content-Type" CONTENT="text/html; charset=UTF-8">\n<TITLE>' +
+            'Bookmarks</TITLE>\n<H1>Bookmarks</H1>\n<DL><p>\n');
+
+        for (var i in pages) {
+            buffer.push('        <DT><A HREF="' + pages[i].url + '" ADD_DATE="' +
+                add_date + '">' + pages[i].name + '</A>\n');
+
+            var encoded_settings = JSON.stringify({
+                mode: pages[i].mode,
+                regex: pages[i].regex,
+                selector: pages[i].selector,
+                check_interval: pages[i].check_interval,
+                crc: pages[i].crc,
+                last_check: pages[i].last_check,
+                last_changed: pages[i].last_changed
+            }).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+            buffer.push('            <!--PageMonitorAdvancedPageData=' +
+                encoded_settings + '-->\n');
+        }
+
+        buffer.push('</DL><p>');
+
+        callback(buffer.join(''));
+    });
+}
+
+// Takes the contents of a netscape bookmarks file and imports all the pages in
+// it for monitoring. IF any of the pages contain Page Monitor-specific settings
+// as written out by exportPagesList(), these are imported as well. Returns the
+// number of pages found.
+function importPagesList(bookmarks) {
+    var page_regex = new RegExp('(<[aA][^<>]+>[^<>]+<\/[aA]>)(?:\\s*<!--' +
+        'PageMonitorAdvancedPageData=' +
+        '(\{.*?\})-->)?', 'g');
+    var match;
+    var matches_count = 0;
+
+    while (match = page_regex.exec(bookmarks, page_regex.lastIndex)) {
+        var link = $(match[1]);
+        var url = link.attr('HREF') || '';
+        var name = link.text() || chrome.i18n.getMessage('untitled', url);
+
+        var advanced = {};
+        if (match[2]) {
+            advanced = JSON.parse(match[2].replace(/&amp;/g, '&')
+                .replace(/&lt;/g, '<')
+                .replace(/&gt;/g, '>'));
+        }
+
+        if (url) {
+            addPage($.extend({ url: url, name: name }, advanced));
+            matches_count++;
+        }
+    }
+
+    return matches_count;
+}
+
+//Global Controls Initialization
+
+// Initializes the global controls with saved values and event handlers.
 function initializeGlobalControls() {
     initializeColorPicker();
     initializeAnimationToggler();
@@ -16,599 +178,97 @@ function initializeGlobalControls() {
     initializeExporter();
     initializeImporter();
     initializeGlobalChecker();
-    initializeAdvancedSwitch()
+    initializeAdvancedSwitch();
 }
+
+// Initializes the color picker input.Fills it with the color from
+// SETTINGS.badge_color and applies the jQuery colorPicker plugin function on
+// it.
+
 function initializeColorPicker() {
-    var a = function(a) {
-        return 16 <= a ? a.toString(16) : "0" + a.toString(16)
-    }
-        , b = getSetting(SETTINGS.badge_color) || [0, 180, 0, 255];
-    b = "#" + a(b[0]) + a(b[1]) + a(b[2]);
-    $("#badge_color input").val(b).change(function() {
-        var a = $(this).val();
-        setSetting(SETTINGS.badge_color, [parseInt(a.slice(1, 3), 16), parseInt(a.slice(3, 5), 16), parseInt(a.slice(5, 7), 16), 255]);
-        BG.updateBadge()
-    }).colorPicker()
+    var toHex = function(d) {
+        return d >= 16 ? d.toString(16) : '0' + d.toString(16);
+    };
+
+    var badge_color = getSetting(SETTINGS.badge_color) || [0, 180, 0, 255];
+    var badge_color = '#' + toHex(badge_color[0]) +
+        toHex(badge_color[1]) +
+        toHex(badge_color[2]);
+
+    $('#badge_color input').val(badge_color).change(function() {
+        var color = $(this).val();
+
+        setSetting(SETTINGS.badge_color, [parseInt(color.slice(1,3), 16),
+            parseInt(color.slice(3,5), 16),
+            parseInt(color.slice(5,7), 16),
+            255]);
+        BG.updateBadge();
+    }).colorPicker();
 }
+
+// Initializes the animation toggler drop-down.
+
 function initializeAnimationToggler() {
-    $("#animation select").change(function() {
-        var a = "enabled" != $(this).val();
-        setSetting(SETTINGS.animations_disabled, a);
-        $.fx.off = a
-    }).val(getSetting(SETTINGS.animations_disabled) ? "disabled" : "enabled")
+    $('#animation select').change(function() {
+        var disabled = ($(this).val() != 'enabled');
+        setSetting(SETTINGS.animations_disabled, disabled);
+        $.fx.off = disabled;
+    }).val(getSetting(SETTINGS.animations_disabled) ? 'disabled' : 'enabled');
 }
+
+// Initializes the sorter drop-down.
 function initializeSorter() {
-    $("#sort select").change(function() {
+    $('#sort select').change(function() {
         setSetting(SETTINGS.sort_by, $(this).val());
-        fillPagesList()
-    }).val(getSetting(SETTINGS.sort_by) || "date added")
+        fillPagesList();
+    }).val(getSetting(SETTINGS.sort_by) || 'date added');
 }
+
+// Initializes the two check interval sliders
+
 function initializeIntervalSliders() {
-    var a = (getSetting(SETTINGS.check_interval) || 108E5) / 6E4
-        , b = $("#basic_interval input[type=range]")
-        , c = $("#basic_interval .range_value_label")
-        , e = $("#interval input")
-        , d = $("#interval .check_every_label");
-    e.val(a).change(function() {
-        var a = 6E4 * parseFloat($(this).val());
-        5E3 > a && (a = 5E3);
-        1995E5 < a && (a = 1995E5);
-        var c = a / 6E4;
-        e.val(c);
-        b.val(timeAbsoluteToLog(c)).change();
-        c = 1 == c ? chrome.i18n.getMessage("minute") : chrome.i18n.getMessage("minutes", "2");
-        d.text(c.split(" ")[1]);
-        setSetting(SETTINGS.check_interval, a)
+    var interval_ms = getSetting(SETTINGS.check_interval) || (180 * 60 * 1000);
+    var interval_min = interval_ms / (60 * 1000);
+    var slider = $('#basic_interval input[type=range]');
+    var slider_label = $('#basic_interval .range_value_label');
+    var textbox = $('#interval input');
+    var textbox_label = $('#interval .check_every_label');
+
+    textbox.val(interval_min).change(function() {
+        var val_ms = parseFloat($(this).val()) * 60 * 1000;
+        if (val_ms < 5000) val_ms = 5000;
+        if (val_ms > 199500000) val_ms = 199500000;
+        var val_min = val_ms / (60 * 1000);
+        textbox.val(val_min);
+        slider.val(timeAbsoluteToLog(val_min)).change();
+        var message;
+        if (val_min == 1) {
+            message = chrome.i18n.getMessage('minute');
+        } else {
+            message = chrome.i18n.getMessage('minutes', '2');
+        }
+        textbox_label.text(message.split(' ')[1]);
+
+        setSetting(SETTINGS.check_interval, val_ms);
     }).change();
-    b.val(timeAbsoluteToLog(a)).change(function() {
-        var a = 6E4 * timeLogToAbsolute(parseFloat($(this).val()));
-        b.siblings(".range_value_label").text(describeTime(a))
+
+    slider.val(timeAbsoluteToLog(interval_min)).change(function() {
+        var val_ms = timeLogToAbsolute(parseFloat($(this).val())) * 60 * 1000;
+        slider.siblings('.range_value_label').text(describeTime(val_ms));
     }).mouseup(function() {
-        var a = timeLogToAbsolute(parseFloat($(this).val()))
-            , b = 6E4 * a;
-        e.val(a);
-        setSetting(SETTINGS.check_interval, b)
+        var val_min = timeLogToAbsolute(parseFloat($(this).val()));
+        var val_ms = val_min * 60 * 1000;
+        textbox.val(val_min);
+        setSetting(SETTINGS.check_interval, val_ms);
     }).mouseup().change();
-    a = b.offset();
-    var f = b.width();
-    b.height();
-    var g = c.width();
-    c.height();
-    c.css({
-        left: a.left + f / 2 - g / 2
-    })
+
+    var position = slider.offset();
+    var width = slider.width();
+    var height = slider.height();
+    var label_width = slider_label.width();
+    var label_height = slider_label.height();
+
+    var new_left = position.left + width / 2 - label_width / 2;
+    slider_label.css({ left: new_left });
 }
-function initializeNotificationsToggler() {
-    var a = $("#notifications select, #basic_notifications select");
-    a.change(function() {
-        var b = $(this).val();
-        a.not(this).val(b);
-        setSetting(SETTINGS.notifications_enabled, "enabled" == b);
-        $("#notifications_timeout input").attr("disabled", "enabled" != b)
-    }).val(getSetting(SETTINGS.notifications_enabled) ? "enabled" : "disabled")
-}
-function initializeNotificationsTimeout() {
-    var a = getSetting(SETTINGS.notifications_timeout) / 1E3 || 30;
-    $("#notifications_timeout input").val(a).change(function() {
-        var a = 1E3 * parseFloat($(this).val());
-        a = 6E4 < a ? chrome.i18n.getMessage("until_closed") : describeTime(a);
-        $(this).siblings(".range_value_label").text(a)
-    }).mouseup(function() {
-        var a = 1E3 * parseFloat($(this).val());
-        setSetting(SETTINGS.notifications_timeout, a)
-    }).change().attr("disabled", !getSetting(SETTINGS.notifications_enabled))
-}
-function initializeSoundSelector() {
-    var a = $("#sound_alert select, #basic_sound_alert select")
-        , b = $("#play_sound")
-        , c = $("#delete_sound")
-        , e = getSetting(SETTINGS.custom_sounds) || [];
-    $.each(e, function(b, c) {
-        $("<option>").text(c.name).attr("value", c.url).appendTo(a)
-    });
-    a.change(function() {
-        var e = $(this).val();
-        a.not(this).val(e);
-        setSetting(SETTINGS.sound_alert, e);
-        b.attr({
-            disabled: "" == e
-        });
-        c.attr({
-            disabled: /^$|^chrome-extension:/.test(e)
-        })
-    });
-    a.val(getSetting(SETTINGS.sound_alert) || "");
-    a.change()
-}
-function initializeSoundPlayer() {
-    var a = $("#sound_alert select")
-        , b = $("#play_sound")
-        , c = $("#delete_sound");
-    b.click(function() {
-        a.attr("disabled", !0);
-        b.attr("disabled", !0);
-        c.attr("disabled", !0);
-        var e = new Audio(a.val());
-        e.addEventListener("ended", function() {
-            a.attr("disabled", !1);
-            b.attr("disabled", !1);
-            c.attr("disabled", !1)
-        });
-        e.play()
-    })
-}
-function initializeSoundCreator() {
-    var a = $("#new_sound")
-        , b = $("#new_sound_form");
-    b.css({
-        top: (window.innerHeight - b.height()) / 2,
-        left: (window.innerWidth - b.width()) / 2
-    });
-    a.click(function() {
-        $("input", b).val("");
-        shadeBackground(!0);
-        b.fadeIn()
-    });
-    $("#new_sound_cancel").click(function() {
-        shadeBackground(!1);
-        b.fadeOut()
-    });
-    $("#new_sound_create").click(function() {
-        var a = $("#new_sound_name").val()
-            , e = $("#new_sound_url").val()
-            , d = $(this);
-        if (e && a) {
-            d.attr("disabled", !0);
-            d.css("cursor", "progress");
-            var f = function() {
-                d.attr("disabled", !1);
-                d.css("cursor", "auto")
-            }
-                , g = new Audio(e);
-            g.addEventListener("error", function() {
-                alert(chrome.i18n.getMessage("new_sound_failed"));
-                f()
-            });
-            g.addEventListener("canplaythrough", function() {
-                var c = getSetting(SETTINGS.custom_sounds) || [];
-                c.push({
-                    name: a,
-                    url: e
-                });
-                setSetting(SETTINGS.custom_sounds, c);
-                $("<option>").text(a).attr("value", e).appendTo("#sound_alert select, #basic_sound_alert select");
-                f();
-                shadeBackground(!1);
-                b.fadeOut()
-            })
-        } else
-            alert(chrome.i18n.getMessage("new_sound_prompt"))
-    });
-    $("#delete_sound").click(function() {
-        var a = $("#sound_alert select")
-            , b = a.val()
-            , d = getSetting(SETTINGS.custom_sounds) || [];
-        setSetting(SETTINGS.custom_sounds, d.filter(function(a) {
-            return a.url != b
-        }));
-        $("option:selected", a).remove();
-        a.val("")
-    })
-}
-function initializeViewAllSelector() {
-    $("#view_all select").change(function() {
-        setSetting(SETTINGS.view_all_action, $(this).val())
-    }).val(getSetting(SETTINGS.view_all_action) || "diff")
-}
-function initializeHideDeletionsToggler() {
-    $("#hide_deletions input:checkbox").change(function() {
-        var a = $(this).prop("checked");
-        setSetting(SETTINGS.hide_deletions, a)
-    }).prop("checked", getSetting(SETTINGS.hide_deletions))
-}
-function initializeShowFullPageDiff() {
-    $("#show_full_page_diff input:checkbox").change(function() {
-        var a = $(this).prop("checked");
-        setSetting(SETTINGS.show_full_page_diff, a)
-    }).prop("checked", getSetting(SETTINGS.show_full_page_diff))
-}
-function initializeExporter() {
-    var a = $("#export_form");
-    $("#export").click(function() {
-        exportPagesList(function(b) {
-            $("textarea", a).val(b);
-            shadeBackground(!0);
-            a.fadeIn()
-        })
-    });
-    $("button", a).click(function() {
-        a.fadeOut();
-        shadeBackground(!1)
-    })
-}
-function initializeImporter() {
-    var a = $("#import_form");
-    $("#import").click(function() {
-        shadeBackground(!0);
-        a.fadeIn()
-    });
-    $("#import_cancel", a).click(function() {
-        a.fadeOut();
-        shadeBackground(!1)
-    });
-    $("#import_perform", a).click(function() {
-        var b = 0;
-        try {
-            b = importPagesList($("textarea", a).val())
-        } catch (c) {
-            alert(chrome.i18n.getMessage("import_error"));
-            a.fadeOut();
-            shadeBackground(!1);
-            return
-        }
-        b ? (chrome.i18n.getMessage("import_success_single"),
-            chrome.i18n.getMessage("import_success_multi", b.toString()),
-            fillPagesList(function() {})) : alert(chrome.i18n.getMessage("import_empty"));
-        a.fadeOut();
-        shadeBackground(!1)
-    })
-}
-function initializeGlobalChecker() {
-    $("#check_all").click(function() {
-        getAllPageURLs(function(a) {
-            a = chrome.i18n.getMessage("check_in_progress") + "..";
-            $(".last_check_time").text(a);
-            BG.check(!0, $.noop, function(a) {
-                a = findPageRecord(a);
-                $(".last_check_time", a).trigger("time_updated")
-            })
-        })
-    })
-}
-(function() {
-        var a = !1;
-        initializeAdvancedSwitch = function() {
-            if (a)
-                return !1;
-            a = !0;
-            $("#options_switch input").click(function() {
-                var b = $(this).is(":checked")
-                    , c = b ? "hidden" : "visible";
-                $("#basic_interval .range_value_label").css("visibility", c);
-                var e = b ? "#advanced_options" : "#basic_options";
-                $(b ? "#basic_options" : "#advanced_options").slideUp("slow", function() {
-                    $(e).slideDown("slow", function() {
-                        a = !1
-                    })
-                })
-            })
-        }
-    }
-)();
-function initializePageControls() {
-    initializePageRename();
-    initializePageRemove();
-    initializePageCheck();
-    initializePageAdvancedToggler();
-    initializePageCheckInterval();
-    initializePageModeSelector();
-    initializePageModeTester();
-    initializePageModePicker()
-}
-function initializePageRename() {
-    $(".rename").live("click", function() {
-        var a = findPageRecord(this).find(".page_link");
-        if (!a.is(":hidden")) {
-            var b = $('<input type="text" value="' + a.text() + '" />')
-                , c = $('<input type="button" value="' + chrome.i18n.getMessage("cancel") + '" />')
-                , e = $('<input type="button" value="' + chrome.i18n.getMessage("ok") + '" />');
-            a.hide().after(c).after(e).after(b);
-            b.focus().keyup(function(a) {
-                13 == a.which ? e.click() : 27 == a.which && c.click()
-            });
-            c.click(function() {
-                b.remove();
-                e.remove();
-                c.remove();
-                a.show()
-            });
-            e.click(function() {
-                a.text(b.val());
-                setPageSettings(findUrl(this), {
-                    name: b.val()
-                });
-                c.click()
-            })
-        }
-    })
-}
-function initializePageRemove() {
-    $(".stop_monitoring").live("click", function() {
-        var a = findUrl(this);
-        removePage(a, BG.updateBadge);
-        var b = scrollY;
-        $("td", findPageRecord(this)).slideUp("slow", function() {
-            1 == $("#pages .page_record").length ? $("#pages").animate({
-                height: "50px",
-                opacity: 1
-            }, "slow", fillPagesList) : (fillPagesList(),
-                scrollTo(0, b))
-        })
-    })
-}
-function initializePageCheck() {
-    $(".check_now").live("click", function() {
-        var a = $(".last_check_time", findPageRecord(this))
-            , b = findUrl(this)
-            , c = chrome.i18n.getMessage("check_in_progress") + "..";
-        a.text(c);
-        BG.checkPage(b, function(b) {
-            a.trigger("time_updated");
-            BG.updateBadge()
-        })
-    })
-}
-function initializePageAdvancedToggler() {
-    $(".advanced_toggle input[type=checkbox]").live("click", function() {
-        var a = findUrl(this)
-            , b = findPageRecord(this);
-        if ($(this).is(":checked")) {
-            $(".advanced_toggle", b).addClass("toggled");
-            $(".advanced_controls", b).slideDown("fast");
-            var c = $(".page_interval", b);
-            0 < $(":checked", c).length && (c = $("input[type=range]", c).val(),
-                c = timeLogToAbsolute(c),
-                setPageCheckInterval(a, c));
-            if (0 < $(".mode :checked", b).length) {
-                c = $(".mode select", b).val();
-                var e = $(".mode_string", b).val();
-                setPageRegexOrSelector(a, c, e)
-            }
-        } else
-            $(".advanced_controls", b).slideUp("fast", function() {
-                $(".advanced_toggle", b).removeClass("toggled")
-            }),
-                setPageCheckInterval(a, null),
-                setPageRegexOrSelector(a, "regex", null)
-    });
-    $(".advanced_controls input[type=checkbox]").live("click", function() {
-        var a = $(this).is(":checked");
-        $(this).nextAll("span").toggleClass("enabled", a).toggleClass("disabled", !a);
-        $("input,select", $(this).parent()).not(this).attr({
-            disabled: !a
-        })
-    })
-}
-function initializePageCheckInterval() {
-    $(".page_interval input[type=checkbox]").live("click", function() {
-        var a = findUrl(this);
-        if ($(this).is(":checked")) {
-            var b = $("input[type=range]", $(this).parent()).val();
-            b = timeLogToAbsolute(parseFloat(b));
-            setPageCheckInterval(a, b)
-        } else
-            setPageCheckInterval(a, null)
-    });
-    $(".page_interval input[type=range]").live("change", function() {
-        var a = 6E4 * timeLogToAbsolute(parseFloat($(this).val()));
-        $(this).siblings(".range_value_label").text(describeTime(a))
-    }).live("mouseup", function() {
-        var a = timeLogToAbsolute(parseFloat($(this).val()));
-        setPageCheckInterval(findUrl(this), a)
-    })
-}
-function initializePageModeSelector() {
-    $(".mode input[type=checkbox]").live("click", function() {
-        var a = findUrl(this)
-            , b = findPageRecord(this);
-        $(this).is(":checked") ? $(".mode_string", b).keyup() : setPageSettings(a, {
-            mode: "text",
-            regex: null,
-            selector: null
-        })
-    });
-    $(".mode select").live("change", function() {
-        var a = findPageRecord(this);
-        $(".mode_string", a).keyup();
-        $(".mode_pick", a).attr({
-            disabled: "regex" == $(this).val()
-        })
-    });
-    $(".mode_string").live("keyup", function() {
-        var a = $("select", findPageRecord(this)).val();
-        setPageRegexOrSelector(findUrl(this), a, $(this).val())
-    }).live("change", function() {
-        $(this).keyup()
-    })
-}
-function initializePageModeTester() {
-    var a = $("#test_result_form");
-    $(".mode_test").live("click", function() {
-        var b = findUrl(this)
-            , c = findPageRecord(this)
-            , e = $("select", c).val()
-            , d = $(".mode_string", c).val()
-            , f = $(this);
-        f.val(chrome.i18n.getMessage("test_progress")).add($(".mode_string", c)).attr({
-            disabled: !0
-        });
-        $.ajax({
-            url: b,
-            dataType: "text",
-            success: function(c) {
-                ("regex" == e ? findAndFormatRegexMatches : findAndFormatSelectorMatches)(c, d, function(f) {
-                    $("textarea", a).val(f);
-                    shadeBackground(!0);
-                    a.fadeIn();
-                    cleanAndHashPage(c, e, d, d, function(a) {
-                        setPageSettings(b, {
-                            crc: a
-                        })
-                    })
-                })
-            },
-            error: function() {
-                alert(chrome.i18n.getMessage("test_fail"))
-            },
-            complete: function() {
-                f.val(chrome.i18n.getMessage("test_button")).add($(".mode_string", c)).attr({
-                    disabled: !1
-                })
-            }
-        })
-    });
-    $("button", a).click(function() {
-        a.fadeOut();
-        shadeBackground(!1)
-    })
-}
-function initializePageModePicker() {
-    $(".mode_pick").live("click", function() {
-        chrome.tabs.create({
-            url: findUrl(this),
-            selected: !0
-        }, function(a) {
-            chrome.tabs.executeScript(a.id, {
-                file: "lib/jquery-1.7.1.js"
-            }, function() {
-                chrome.tabs.executeScript(a.id, {
-                    file: "scripts/selector.js"
-                }, function() {
-                    chrome.tabs.executeScript(a.id, {
-                        code: "$(initialize);"
-                    })
-                });
-                chrome.tabs.insertCSS(a.id, {
-                    file: "styles/selector.styles"
-                })
-            })
-        })
-    })
-}
-function fillPagesList(a) {
-    getAllPages(function(b) {
-        sortPagesInplace(b, getSetting(SETTINGS.sort_by) || "date added");
-        $("#pages").html("");
-        0 < b.length ? $.each(b, function(a, b) {
-            addPageToTable(b)
-        }) : $("#templates .empty").clone().appendTo("#pages");
-        (a || $.noop)()
-    })
-}
-function sortPagesInplace(a, b) {
-    if ("date added" != b) {
-        var c = getSetting(SETTINGS.check_interval);
-        a.sort(function(a, d) {
-            if ("name" == b)
-                a = a.name,
-                    d = d.name;
-            else if ("check interval" == b)
-                a = a.check_interval || c,
-                    d = d.check_interval || c;
-            else if ("last check" == b)
-                a = -a.last_check,
-                    d = -d.last_check;
-            else if ("last change" == b)
-                a = -a.last_changed || 0,
-                    d = -d.last_changed || 0;
-            else if ("url" == b)
-                a = a.url,
-                    d = d.url;
-            else
-                throw Error("Invalid sort order.");
-            return a < d ? -1 : 1
-        })
-    }
-}
-function addPageToTable(a) {
-    var b = $("#templates .page_record").clone()
-        , c = getSetting(SETTINGS.check_interval)
-        , e = a.check_interval || c;
-    c = !1;
-    var d = a.name || chrome.i18n.getMessage("untitled", a.url);
-    60 < d.length && (d = d.replace(/([^]{20,60})(\w)\b.*$/, "$1$2..."));
-    b.find(".page_link").attr({
-        href: a.url,
-        target: "_blank"
-    }).text(d);
-    b.find(".favicon").attr({
-        src: getFavicon(a.url)
-    });
-    var f = b.find(".last_check_time");
-    f.bind("time_updated", function() {
-        var b = $(this);
-        getPage(a.url, function(a) {
-            var c = a.last_check ? describeTimeSince(a.last_check) : chrome.i18n.getMessage("never");
-            c != b.text() && b.fadeOut("slow", function() {
-                b.text(c).fadeIn("slow")
-            })
-        })
-    });
-    f.trigger("time_updated");
-    setInterval(function() {
-        f.trigger("time_updated")
-    }, 15E3);
-    e = timeAbsoluteToLog(e / 6E4);
-    var g = $(".page_interval", b);
-    $("input[type=range]", g).val(e);
-    setTimeout(function() {
-        $("input[type=range]", g).change()
-    }, 0);
-    a.check_interval && (g.children("span").addClass("enabled").removeClass("disabled"),
-        $("input", g).attr({
-            disabled: !1
-        }),
-        $("input[type=checkbox]", g).attr({
-            checked: !0
-        }),
-        c = !0);
-    null == a.mode && (a.mode = a.regex ? "regex" : "text");
-    "text" != a.mode && (c = $(".mode", b),
-        e = "regex" == a.mode ? a.regex : a.selector,
-        c.children("span").addClass("enabled").removeClass("disabled"),
-        $("input,select", c).attr({
-            disabled: !1
-        }),
-        $("input[type=checkbox]", c).attr({
-            checked: !0
-        }),
-        $("select", c).val(a.mode).change(),
-        $(".mode_string", c).val(e).keyup(),
-        c = !0);
-    c && ($(".advanced_toggle", b).addClass("toggled"),
-        $(".advanced_toggle input", b).attr({
-            checked: !0
-        }),
-        $(".advanced_controls", b).css({
-            display: "block"
-        }));
-    b.appendTo("#pages")
-}
-function selectorServer(a, b, c) {
-    a && a.selector && (b = findPageRecord(a.url),
-    0 < b.length && 0 < $(".advanced_toggle.toggled", b).length && 0 < $(".mode :checked", b).length && ($(".mode select", b).val("selector"),
-        $(".mode_string", b).val(a.selector).keyup(),
-        c(null)))
-}
-function init() {
-    getSetting(SETTINGS.animations_disabled) && ($.fx.off = !0);
-    applyLocalization();
-    $("title").text(chrome.i18n.getMessage("options_title"));
-    $(".mode_test").val(chrome.i18n.getMessage("test_button"));
-    $(".mode_pick").val(chrome.i18n.getMessage("pick_button"));
-    initializeGlobalControls();
-    initializePageControls();
-    chrome.extension.onRequest.addListener(selectorServer);
-    fillPagesList(function() {
-        var a = atob(window.location.hash.substring(1));
-        if (a) {
-            a = findPageRecord(a);
-            var b = $(".advanced_toggle input[type=checkbox]", a);
-            b.attr("checked", !0);
-            b.click();
-            b.attr("checked", !0);
-            a[0].scrollIntoView()
-        }
-    })
-}
-;
+

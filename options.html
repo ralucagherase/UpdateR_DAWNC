@@ -3,46 +3,54 @@
 <head>
     <meta charset="UTF-8">
     <title>UpdateR Options</title>
+
     <link rel="stylesheet" type="text/css" href="styles/options.css">
+    <script type="text/javascript" src="lib/jquery-1.7.1.js"></script>
+    <script type="text/javascript" src="lib/jquery.colorPicker.js"></script>
+    <script type="text/javascript" src="js/base.js"></script>
+    <script type="text/javascript" src="js/options.js"></script>
+    <script type="text/javascript" src="js/options-entry.js"></script>
 
 </head>
 <body>
     <h1>
-        <span class="title">UpdateR Options</span>
+        <span  class="i18n" title="options_header">UpdateR Options</span>
     </h1>
 
     <table id="templates">
-        <tbody>
         <tr class="page_record">
             <td>
 
                 <div class="page_info">
+                    <img class="favicon" src="chrome://favicon" alt="Favicon" />
                     <a class="page_link" title="Visit Page" href="#">Page</a>
                 </div>
 
 
                 <div class="page_controls">
-                        <span class="advanced_toggle toggled">
+                        <span class="advanced_toggle">
                             <label>
-                                <input type="checkbox" checked="checked">
-                                <span class="advanced">Advanced</span>
+                                <input type="checkbox" />
+                                <span class="i18n" title="advanced">Advanced</span>
                             </label>
                         </span>
 
 
                         <span class="rename">
-                            <span class="rename_page">Rename page</span>
+                            <img src="img/rename.png" alt="Rename" />
+                            <span class="i18n" title="rename_page">Rename page</span>
                         </span>
 
 
                         <span class="stop_monitoring">
-                            <span class="remove_page">Stop monitoring</span>
+                            <img src="img/stop_monitoring.png" alt="Stop Monitoring" />
+                            <span class="i18n" title="remove_page">Stop monitoring</span>
                         </span>
 
 
                         <span class="last_check">
-                            <img src="" class="check_now" alt="Check Now">
-                            <img src="" alt="Last Check">
+                            <img src="img/refresh.png" class="check_now" alt="Check Now">
+                            <img src="img/monitor.png" alt="Last Check">
                             <span class="i18n" title="last_check">Last Check:</span>
                             <span class="i18n" title="last_check_time" style="display: inline">
                                 <span class="unknown">.</span>
@@ -51,27 +59,25 @@
 
                         <div class="advanced_controls" style="display: block">
                             <div class="page_interval">
-                                <input type="checkbox">
+                                <input type="checkbox" />
                                 <span class="disabled">
-                                    <span class="check_every"></span>
-                                    :
-                                    <input type="range" disabled min="-6" max="20" step="0.01">
+                                    <span class="i18n" title="check_every"></span>:
+                                    <input type="range" disabled="disabled" min="-6" max="20" step="0.01" />
                                     <label class="range_value_label"></label>
                                 </span>
                             </div>
 
                             <div class="mode">
-                                <input type="checkbox">
+                                <input type="checkbox" />
                                     <span class="disabled">
-                                        <span class="custom_mode"></span>
-                                        :
-                                        <select disabled>
-                                            <option value="selector" class="selector"></option>
-                                            <option value="regex" class="regex"></option>
+                                        <span class="i18n" title="custom_mode"></span>:
+                                        <select disabled="disabled">
+                                            <option value="selector" class="i18n" title="selector"></option>
+                                            <option value="regex" class="i18n" title="regex"></option>
                                         </select>
-                                        <input type="text" disabled class="mode_string">
-                                        <input type="button" disabled value="Test" class="mode_test">
-                                        <input type="button" disabled value="Pick" class="mode_pick">
+                                        <input type="text" disabled="disabled" class="mode_string" />
+                                        <input type="button" disabled="disabled" value="Test" class="mode_test" />
+                                        <input type="button" disabled="disabled" value="Pick" class="mode_pick" />
                                     </span>
                             </div>
 
@@ -82,7 +88,7 @@
         </tr>
         <tr class="empty">
             <td>
-                <span class="no_pages_monitored"></span>
+                <span class="i18n" title="no_pages_monitored"></span>
             </td>
         </tr>
     </table>
@@ -96,10 +102,9 @@
     <!-- Basic options. -->
     <div id="basic_options">
         <table>
-            <tbody>
-                <tr>
+                 <tr>
                     <td id="basic_notifications">
-                        <img src="" alt="">
+                        <img src="img/notification.png" alt="Desktop Notifications">
                         <span class="i18n" title="notifications">Desktop Notifications:</span>
                         <select>
                             <option value="enabled" class="i18n" title="enabled">Enabled</option>
@@ -107,20 +112,19 @@
                         </select>
                     </td>
                     <td id="basic_sound_alert">
-                        <img src="" alt="">
+                        <img src="img/sound.png" alt="Audio Alert">
                         <span class="i18n" title= "sound_alert">Sound alert:</span>
                         <select>
                             <option value="" class="i18n" title="sound_none">None</option>
                         </select>
                     </td>
                     <td id="basic_interval">
-                        <img src="" alt="">
+                        <img src="img/clock.png" alt="Check Interval">
                         <span class="i18n" title="check_every">Check interval:</span>
                         <input type="range" value="12.8" min="-6" max="20" step="0.01">
                         <label class="range_value_label" style="left: 905px"></label>
                     </td>
                 </tr>
-            </tbody>
         </table>
     </div>
 
@@ -128,7 +132,8 @@
     <!-- Advanced options. -->
     <div id="advanced_options" style="display: block">
         <p id="notifications">
-            <span class="notifications">Notifications</span>
+            <img src="img/notification.png" alt="Desktop Notifications" />
+            <span class="i18n" title="notifications">Notifications</span>
             <select>
                 <option value="enabled" class="enabled"> Enabled</option>
                 <option value="disabled" class="disabled"> Disabled</option>
@@ -136,101 +141,110 @@
         </p>
 
         <p id="notifications_timeout">
-            <span class="notifications_timeout">Notification stay:</span>
+            <img src="img/notification.png" alt="Desktop Notifications" />
+            <span class="i18n" title="notifications_timeout">Notification stay:</span>
             <input type="range" value="30" min="1" max="62" step="1">
             <label class="range_value_label">secondes</label>
         </p>
 
         <p id="interval">
-            <span class="check_every">Check interval:</span>
+            <img src="img/clock.png" alt="Check Interval" />
+            <span class="i18n" title="check_every">Check interval:</span>
             <input type="text" value="180" maxlength="4">
             <label class="check_every_label">minutes</label>
         </p>
 
         <p id="sound_alert">
-            <img src="" alt="">
-            <span class="sound_alert">Sound Alert:</span>
+            <img src="img/sound.png" alt="Audio Alert">
+            <span class="i18n" title="sound_alert">Sound Alert:</span>
 
             <select>
-                <option value="" class="sound_none">None</option>
+                <option value="" class="i18n" title="sound_none">None</option>
             </select>
 
-            <button id="play_sound" disabled="disabled">
-                <span class="sound_play">Play</span>
+            <button id="play_sound">
+                <span class="i18n" title="sound_play">Play</span>
             </button>
-
             <button id="new_sound">
-                <span class="sound_new">New</span>
+                <span class="i18n" title="sound_new">New</span>
+            </button>
+            <button id="delete_sound">
+                <span class="i18n" title="sound_delete">Delete</span>
             </button>
 
-            <button id="delete_sound" disabled="disabled">
-                <span class="sound_delete">Delete</span>
-            </button>
         </p>
 
 
         <p id="sort">
-            <img src="" alt="">
-            <span class="sort">Sort by:</span>
+            <img src="img/sort.png" alt="Sort By" />
+            <span class="i18n" title="sort">Sort by:</span>
             <select>
-                <option value="date added" class="sort_date">Date added</option>
-                <option value="name" class="sort_name">Name</option>
-                <option value="url" class="sort_url">URL</option>
-                <option value="check interval" class="sort_interval">Date interval</option>
-                <option value="last check" class="sort_last_check">Last checked</option>
-                <option value="last change" class="sort_last_change">Last changed</option>
+                <option value="date added" class="i18n" title="sort_date">Date added</option>
+                <option value="name" class="i18n" title="sort_name">Name</option>
+                <option value="url" class="i18n" title="sort_url">URL</option>
+                <option value="check interval" class="i18n" title="sort_interval">Date interval</option>
+                <option value="last check" class="i18n" title="sort_last_check">Last checked</option>
+                <option value="last change" class="i18n" title="sort_last_change">Last changed</option>
             </select>
         </p>
 
 
         <p id="animation">
-            <span class="animations">Animations:</span>
+            <img src="img/animation.png" alt="Animation" />
+            <span class="i18n" title="animations">Animations:</span>
             <select>
-                <option value="enabled" class="enabled">enabled</option>
-                <option value="disabled" class="disabled">disabled</option>
+                <option value="enabled" class="i18n" title="enabled">enabled</option>
+                <option value="disabled" class="i18n" title="disabled">disabled</option>
             </select>
         </p>
 
 
         <p id="view_all">
-            <span class="view_all_function">View all function</span>
+            <img src="img/view_all.png" alt="View All" />
+            <span class="i18n" title="view_all_function">View all function</span>
             <select>
-                <option value="diff" class="view_diff">View differences</option>
-                <option value="original" class="view_original">View original</option>
+                <option value="diff" class="i18n" title="view_diff">View differences</option>
+                <option value="original" class="i18n" title="view_original">View original</option>
             </select>
         </p>
 
 
         <p id="badge_color">
-            <span class="badge_color">Notification Color:</span>
+            <img src="img/color.png" alt="Badge Color" />
+            <span class="i18n" title="badge_color">Notification Color:</span>
             <input type="text" value="#00B400">
         </p>
 
 
         <p id="hide_deletions">
-            <span class="hide_deletions">Hide deletions</span>
+            <img src="img/diff.png" alt="Hide Deletions" />
+            <span class="i18n" title="hide_deletions">Hide deletions</span>
             <input type="checkbox">
         </p>
 
 
         <p id="show_full_page_diff">
-            <span class="show_full_page_diff">Show full page differences:</span>
+            <img src="img/diff.png" alt="Show Full Page Diff" />
+            <span class="i18n" title="show_full_page_diff">Show full page differences:</span>
             <input type="checkbox">
         </p>
 
 
         <div id="actions">
-                <span id="import">
-                    <span class="import">Import</span>
-                </span>
+             <span id="import">
+                 <img src="img/import.png" alt="Import" />
+                 <span class="i18n" title="import">Import</span>
+             </span>
 
-                <span id="export">
-                    <span class="export">Export</span>
-                </span>
+            <span id="export">
+                <img src="img/export.png" alt="Export" />
+                <span class="i18n" title="export">Export</span>
+            </span>
 
-                <span id="check_all">
-                    <span class="check_all">Check All Now</span>
-                </span>
+            <span id="check_all">
+                <img src="img/refresh.png" alt="Check Now" />
+                <span class="i18n" title="check_all">Check All Now</span>
+            </span>
         </div>
     </div>
 
@@ -238,22 +252,22 @@
     <!-- Basic/Advanced options switch. -->
     <label id="options_switch">
         <input type="checkbox">
-        <span class="advanced">Advanced</span>
+        <span class="i18n" title="advanced">Advanced</span>
     </label>
 
 
     <!-- Pop-up forms. -->
     <div id="test_result_form">
-        <span class="test_matches">Matched:</span>
-        <textarea rows="10" cols="80" readonly>...</textarea>
+        <span class="i18n" title="test_matches">Matched:</span>
+        <textarea rows="10" cols="80" readonly="readonly">...</textarea>
         <button>
-            <span class="close"></span>
+            <span class="i18n" title="close"></span>
         </button>
     </div>
 
 
     <div id="export_form">
-        <span class="export_prompt">Copy this text into a file and save it as bookmarks.html:</span>
+        <span class="i18n" title="export_prompt">Copy this text into a file and save it as bookmarks.html:</span>
         <textarea rows="10" cols="80">...</textarea>
         <button>
             <span class="close">Close</span>
@@ -262,33 +276,33 @@
 
 
     <div id="import_form">
-        <span class="import_prompt">Paste the contents of your bookmarks.html here:</span>
+        <span class="i18n" title="import_prompt">Paste the contents of your bookmarks.html here:</span>
         <textarea rows="10" cols="80"></textarea>
 
         <button id="import_perform">
-            <span class="import_button">Import</span>
+            <span class="i18n" title="import_button">Import</span>
         </button>
 
         <button id="import_cancel">
-            <span class="cancel">Cancel</span>
+            <span class="i18n" title="cancel">Cancel</span>
         </button>
     </div>
 
 
     <div id="new_sound_form">
-        <label for="new_sound_name" class="sound_name">Name</label>
+        <label for="new_sound_name" class="i18n" title="sound_name">Name</label>
         :
         <input type="text" id="new_sound_name" value="">
-        <label for="new_sound_url" class="sound_url">URL</label>
+        <label for="new_sound_url" class="i18n" title="sound_url">URL</label>
         :
         <input type="text" id="new_sound_url" value="">
 
         <div id="new_sound_buttons">
             <button id="new_sound_create">
-                <span class="sound_create">Create</span>
+                <span class="i18n" title="sound_create">Create</span>
             </button>
             <button id="new_sound_cancel">
-                <span class="cancel">Cancel</span>
+                <span class="i18n" title="cancel">Cancel</span>
             </button>
         </div>
     </div>
