@@ -5,14 +5,23 @@
   "name": "UpdateR",
   "description": "This extension allows the user to see changes in pages",
   "version": "1.0",
-
+  //"default_locale": "en",
+  "background": {
+    "persistent": true,
+    "page": "background.html"
+  },
+  "options_page": "options.html",
   "browser_action": {
     "default_icon": "img/icon.png",
     "default_popup": "popup.html",
     "default_title": "Click here to check your pages!"
   },
   "permissions": [
-    "activeTab",
-    "storage"
-  ]
+    "tabs",
+    "*://*/",
+    "chrome://favicon/",
+    "unlimitedStorage",
+    "notifications"
+  ],
+  "content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self'"
 }
