@@ -28,7 +28,7 @@ var DB=openDatabase('pages','1.0','Monitored Pages',49*1024*1024);
 var REGEX_TIMEOUT = 7 * 1000;
 
 // The path to the worker script that runs asynchronous regex matches.
-var REGEX_WORKER_PATH = 'scripts/regex.js';
+var REGEX_WORKER_PATH = 'js/regex.js';
 
 // Maximum request timeout (in milliseconds).
 var REQUEST_TIMEOUT = 10000;
