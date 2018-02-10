@@ -1,0 +1,205 @@
+*, *::before, *::after {
+    box-sizing: border-box;
+}
+
+html, body{
+    width: 500px;
+    min-height: 200px;
+    margin: 0;
+    padding: 0;
+    font-family: 'Roboto', sans-serif;
+    font-size: 12px;
+    background-color:white;
+}
+
+body {
+    padding:0;
+}
+
+header {
+    position: relative;
+    width:100%;
+    height: 50px;
+    background-color: #40C4FF;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.logo {
+    position: relative;
+    top: 10px;
+    left: 12%;
+    width: 214px;
+    height: 50px;
+}
+
+main {
+    width: 100%;
+}
+
+h1,
+h2 {
+    margin:0;
+}
+
+h2 {
+    font-size: 15px;
+}
+
+footer {
+    position: absolute;
+    bottom: 0;
+    width: 97%;
+    background-color: white;
+    color: #fff;
+    align-items: center;
+}
+
+footer a {
+    width: 100%;
+    height: 50px;
+    display: block;
+    text-decoration: none;
+    text-align: center;
+    font-weight: bold;
+    transition: 0.15s all;
+}
+
+
+header a .footer-text {
+    color: black;
+    font-size: 24px;
+    position: relative;
+    top: 5px;
+}
+
+header a .footer-text{
+    content: "";
+    display: block;
+    right: 20px;
+    top: 0px;
+    background: url('img/cogwheel.png') no-repeat center center;
+    background-size: cover;
+    width: 25px;
+    height: 25px;
+}
+
+
+.container + .container {
+    margin-top: 15px;
+}
+
+
+
+
+#hi-color {
+    cursor: pointer;
+}
+
+.container-3 label:hover {
+    box-shadow: none;
+}
+
+.differences {
+    padding: 0 10px;
+}
+
+.differences h1 {
+    font-size: 3em;
+    margin: 0;
+}
+
+
+.switch-input {
+    display: none;
+}
+.switch-label {
+    position: relative;
+    display: inline-block;
+    min-width: 112px;
+    cursor: pointer;
+    font-weight: 500;
+    text-align: left;
+    margin: 16px;
+    padding: 16px 0 16px 44px;
+}
+.switch-label:before, .switch-label:after {
+    content: "";
+    position: absolute;
+    margin: 0;
+    outline: 0;
+    top: 50%;
+    -ms-transform: translate(0, -50%);
+    -webkit-transform: translate(0, -50%);
+    transform: translate(0, -50%);
+    -webkit-transition: all 0.3s ease;
+    transition: all 0.3s ease;
+}
+.switch-label:before {
+    left: 1px;
+    width: 34px;
+    height: 14px;
+    background-color: #9E9E9E;
+    border-radius: 8px;
+}
+.switch-label:after {
+    left: 0;
+    width: 20px;
+    height: 20px;
+    background-color: #FAFAFA;
+    border-radius: 50%;
+    box-shadow: 0 3px 1px -2px rgba(0, 0, 0, 0.14), 0 2px 2px 0 rgba(0, 0, 0, 0.098), 0 1px 5px 0 rgba(0, 0, 0, 0.084);
+}
+.switch-label .toggle--on {
+    display: none;
+}
+.switch-label .toggle--off {
+    display: inline-block;
+}
+.switch-input:checked + .switch-label:before {
+    background-color: #A5D6A7;
+}
+.switch-input:checked + .switch-label:after {
+    background-color: #4CAF50;
+    -ms-transform: translate(80%, -50%);
+    -webkit-transform: translate(80%, -50%);
+    transform: translate(80%, -50%);
+}
+.switch-input:checked + .switch-label .toggle--on {
+    display: inline-block;
+}
+.switch-input:checked + .switch-label .toggle--off {
+    display: none;
+}
+
+.switch--item{
+    font-family:'Roboto';
+    display:flex;
+    align-items:center;
+}
+
+.outline-picker{
+    background-color:transparent;
+    border:none;
+    cursor:pointer;
+    outline:none;
+    height:30px;
+    width:120px;
+    position:relative;
+    box-shadow:0 0 5px 1px rgba(0,0,0,0.2);
+}
+.outline-picker:hover{
+    box-shadow:0 0 20px 2px rgba(0,0,0,0.2);
+}
+
+.main-content{
+    display: flex;
+    justify-content: space-around;
+}
+
+.differences-container{
+    display:flex;
+    align-items:center;
+    opacity:0.7;
+}

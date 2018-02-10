@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>UpdateR</title>
+    <script src="https://www.gstatic.com/firebasejs/4.9.1/firebase.js"></script>
+    <link href='https://fonts.googleapis.com/css?family=Poppins' rel='stylesheet'>
+    <link rel="stylesheet" type="text/css" href="style.css">
+    <script src="js/background.js"></script>
+</head>
+<body>
+<script src="js/main.js"></script>
+
+<header>
+    <h1 style='color:white;margin-left:20px;'>UpdateR</h1>
+    <a href="http://cliw.buzzshop.ro/settings.html">
+        <span class="footer-text"></span>
+    </a>
+</header>
+
+<main>
+    <script src="js/jscolor.js"></script>
+
+    <div class='main-content'>
+
+        <div>
+
+            <div class='switch--item'>
+                <!--  <input type="checkbox" id="is-enabled">
+                  <label for="is-enabled">Enable on this page</label> -->
+                <div>Enable on this page</div>
+                <input type="checkbox" id="is-enabled" name="set-name" class="switch-input"
+                       onclick="mainFunctionalityWrapper()">
+                <label for="is-enabled" class="switch-label"/>
+            </div>
+
+            <!-- <div class="container container-2">
+              <input type="checkbox" id="icon-number" />
+              <label for="icon-number">Show number in icon</label>
+            </div> -->
+
+            <div class="container container-3">
+                <div style='font-size:13px;margin-bottom:10px;'>Select outline color</div>
+                <input id="hi-color" type="color" value="#fff385" class='outline-picker'/>
+            </div>
+        </div>
+
+        <div class='differences-container'>
+            <div style='margin-right:20px;font-family:"Roboto";font-size:40px;'>0</div>
+            <div>
+                <h2>changes</h2>
+                <h2>detected</h2>
+            </div>
+        </div>
+    </div>
+</main>
+<script src="js/background.js"></script>
+</body>
+</html>
